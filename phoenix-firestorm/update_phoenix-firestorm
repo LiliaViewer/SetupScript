@@ -1,0 +1,25 @@
+#!/bin/bash
+git clone https://github.com/FirestormViewer/fs-build-variables ~/.linux-firestorm/fs-build-variables/
+pushd ~/.linux-firestorm/fs-build-variables/
+git reset --hard
+git fetch
+git pull
+popd
+
+git clone https://github.com/FirestormViewer/phoenix-firestorm ~/.linux-firestorm/viewer/
+pushd ~/.linux-firestorm/viewer/
+git reset --hard
+git fetch
+git pull
+popd
+
+cd ~/.linux-firestorm/viewer/
+python -m venv ~/.venv/
+source ~/.venv/bin/activate
+pip install autobuild llsd
+
+export AUTOBUILD_VARIABLES_FILE=../fs-build-variables/variables
+autobuild configure -A 64 -c ReleaseFS_open
+autobuild build -A 64 -c ReleaseFS_open
+cd build-linux-x86_64/newview/packaged/
+./install.sh

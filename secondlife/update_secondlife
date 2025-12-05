@@ -1,0 +1,26 @@
+#!/bin/bash
+git clone https://github.com/secondlife/build-variables ~/.linux-secondlife/build-variables/
+pushd ~/.linux-secondlife/build-variables/
+git reset --hard
+git fetch
+git pull
+popd
+
+git clone https://github.com/secondlife/viewer -b develop-linux ~/.linux-secondlife/viewer/
+pushd ~/.linux-secondlife/viewer/
+git reset --hard
+git fetch
+git pull
+popd
+
+cd ~/.linux-secondlife/viewer/
+python -m venv ~/.venv/
+source ~/.venv/bin/activate
+
+pip install autobuild llsd
+
+export AUTOBUILD_VARIABLES_FILE=../build-variables/variables
+autobuild configure -A 64 -c ReleaseOS
+autobuild build -A 64 -c ReleaseOS
+cd build-linux-x86_64/newview/packaged/
+./install.sh
